@@ -27,11 +27,23 @@ subjects:
     name: rabbit-pod-autoscaler
     namespace: kube-system
 ---
+apiVersion: v1
+data:
+  rabbit-user: guest
+  rabbit-pass: guest
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: rabbitmq-pod-autoscaler
+  name: rabbit-pod-autoscaler
+
+
+---
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: rabbit-pod-autoscaler
-  namespace: kube-system
 spec:
   replicas: 1
   template:
@@ -39,11 +51,6 @@ spec:
       labels:
         app: rabbit-pod-autoscaler
     spec:
-      nodeSelector:
-        kubernetes.io/role: master
-      tolerations:
-        - effect: NoSchedule
-          key: node-role.kubernetes.io/master
       serviceAccountName: rabbit-pod-autoscaler
       containers:
         - name: rabbit-pod-autoscaler
@@ -57,7 +64,7 @@ spec:
             - name: INTERVAL
               value: "30"
             - name: RABBIT_HOST
-              value: "http://rabbitmq.example.com"
+              value: "rabbitmq-service"
             - name: RABBIT_USER
               valueFrom:
                 secretKeyRef:
@@ -70,8 +77,7 @@ spec:
                   key: rabbit-pass
             - name: AUTOSCALING
               value: >
-                3|10|5|development|example|example.queue;
-                3|5|3|development|example2|example2.queue
+                3|10|3|default|metis-ueuropea|metis.queue;
             - name: LOGS
               value: HIGH
             - name: SLACK_HOOK

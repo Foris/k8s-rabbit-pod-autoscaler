@@ -1,6 +1,7 @@
 ## K8s autoscaler for pods that consume RabbitMQ
 
 Autoscaling process (`autoscale.sh`):
+
 - Loops through deployments defined in `AUTOSCALING` (env var), every `INTERVAL` (env var) seconds.
 - Gets the messages queue on RabbitMQ for the current deployment's queue.
 - Calculates the amount of desired pods and scales the deployment if required.
@@ -32,6 +33,6 @@ This Pod runs in the `kube-system` namespace on k8s master nodes.
 
 ### Deployment
 
-```
+```bash
 kubectl --context CONTEXT -n kube-system apply -f deploy.yml
 ```

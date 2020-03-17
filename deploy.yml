@@ -37,13 +37,13 @@ metadata:
   labels:
     io.kompose.service: rabbitmq-pod-autoscaler
   name: rabbit-pod-autoscaler
-
-
+  namespace: kube-system
 ---
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: rabbit-pod-autoscaler
+  namespace: kube-system
 spec:
   replicas: 1
   template:
@@ -64,20 +64,20 @@ spec:
             - name: INTERVAL
               value: "30"
             - name: RABBIT_HOST
-              value: "rabbitmq-service"
+              value: "rabbitmq-service.default.svc.cluster.local"
             - name: RABBIT_USER
               valueFrom:
-                secretKeyRef:
+                configMapKeyRef:
                   name: rabbit-pod-autoscaler
                   key: rabbit-user
             - name: RABBIT_PASS
               valueFrom:
-                secretKeyRef:
+                configMapKeyRef:
                   name: rabbit-pod-autoscaler
                   key: rabbit-pass
             - name: AUTOSCALING
               value: >
-                3|10|3|default|metis-ueuropea|metis.queue;
+                1|10|3|default|metis-ueuropea|metis;
             - name: LOGS
               value: HIGH
             - name: SLACK_HOOK
